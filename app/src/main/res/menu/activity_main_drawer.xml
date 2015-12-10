@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_actual" android:icon="@android:drawable/ic_menu_camera"
+            android:title="Актуальные объявления" />
+        <item android:id="@+id/nav_all" android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Все объявления" />
+        <item android:id="@+id/nav_archieve" android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Архив" />
+        <item android:id="@+id/nav_settings" android:icon="@android:drawable/ic_menu_report_image"
+            android:title="Настройки"/>
+        <item android:id="@+id/nav_about" android:icon="@android:drawable/ic_menu_send"
+            android:title="О программе" />
+        <item android:id="@+id/nav_logout" android:icon="@android:drawable/ic_menu_manage"
+            android:title="Выход" />
+    </group>
+
+</menu>
