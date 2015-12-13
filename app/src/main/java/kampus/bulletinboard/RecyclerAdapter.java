@@ -51,8 +51,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return mDataset.hashCode(); //тут было mDataset.position, но у нас такого нет.
+        return mDataset.getId(); //тут было mDataset.position, но у нас такого нет.
     }
+
+
+
 
     /*
     //Добавление/обновление объявлений прикручивать предположительно сюда

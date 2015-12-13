@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -15,7 +16,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.RecyclerView;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import java.util.ArrayList;
 
 
@@ -25,10 +39,13 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerAdapter mAdapter;
+    RestService restService;
+    TextView bulletin_Id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        restService = new RestService();
         setContentView(R.layout.activity_main);
 
         //ArrayList<String> myDataset = getDataSet();
@@ -64,10 +81,111 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
+
     }
 
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        //refreshScreen();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v== findViewById(R.id.fab)){
+
+            Intent intent = new Intent(this,BulletinDetails.class);
+            intent.putExtra("student_Id",0);
+            startActivity(intent);
+
+        }else {
+            // You should use refreshScreen() instead, just show you an easier method only :P
+            refreshScreen_SimpleWay();
+        }
+    }
+
+
+    /*
+    private void refreshScreen(){
+
+        //Call to server to grab list of student records. this is a asyn
+        restService.getService().getStudent(new Callback<List<Student>>() {
+            @Override
+            public void success(List<Student> students, Response response) {
+                ListView lv = (ListView) findViewById(R.id.listView);
+
+                CustomAdapter customAdapter = new CustomAdapter(MainActivity.this, R.layout.view_student_entry, students);
+
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        student_Id = (TextView) view.findViewById(R.id.student_Id);
+                        String studentId = student_Id.getText().toString();
+                        Intent objIndent = new Intent(getApplicationContext(), StudentDetail.class);
+                        objIndent.putExtra("student_Id", Integer.parseInt(studentId));
+                        startActivity(objIndent);
+                    }
+                });
+                lv.setAdapter(customAdapter);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(MainActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+    }
+    */
+
+    private void refreshScreen_SimpleWay(){
+
+        restService.getService().getBulletin(new Callback<List<Bulletin>>() {
+            @Override
+            public void success(List<Bulletin> bulletins, Response response) {
+                //ListView lv = (ListView) findViewById(R.id.listView);
+
+
+                ArrayList<HashMap<String, String>> bulletinList = new ArrayList<HashMap<String, String>>();
+
+                for (int i = 0; i < bulletins.size(); i++) {
+                    HashMap<String, String> bulletin = new HashMap<String, String>();
+                    bulletin.put("id", String.valueOf(bulletins.get(i).id));
+                    bulletin.put("text", String.valueOf(bulletins.get(i).text));
+                    bulletin.put("title", String.valueOf(bulletins.get(i).title));
+                    bulletinList.add(bulletin);
+                }
+
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        bulletin_Id = (TextView) view.findViewById(R.id.bulletin_Id);
+                        String bulletinId = bulletin_Id.getText().toString();
+                        Intent objIndent = new Intent(getApplicationContext(), BulletinDetails.class);
+                        objIndent.putExtra("bulletin_Id", Integer.parseInt(bulletinId));
+                        startActivity(objIndent);
+                    }
+                });
+                ListAdapter adapter = new SimpleAdapter(MainActivity.this, bulletinList, R.layout.view_student_entry, new String[]{"id", "name"}, new int[]{R.id.bulletin_Id, R.id.bulletin_text});
+                lv.setAdapter(adapter);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(MainActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+    }
+
+
+
+
     private Bulletin getDataSetNew(){
-        Bulletin B = new Bulletin("Title", "Text");
+        Bulletin B = new Bulletin("Title", "Text", 1);
 
         //for (int i = 0; i < B.length; i++) {
         //    B[i].text = "IdleText";
@@ -167,8 +285,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
 
 
 }

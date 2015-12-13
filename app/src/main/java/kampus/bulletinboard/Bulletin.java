@@ -8,10 +8,12 @@ import java.util.Date;
 public class Bulletin {
     String title;
     String text;
+    int id;
 
-    public Bulletin(String title,  String text) {
+    public Bulletin(String title,  String text, int id) {
         this.title = title;
         this.text = text;
+        this.id = id;
     }
 
     public String getTitle() {
@@ -22,4 +24,7 @@ public class Bulletin {
         return text;
     }
 
+    public int getId() {
+        return id;
+    }
 }
